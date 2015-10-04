@@ -1,26 +1,53 @@
-import java.io.IOException;
-
 public class HuffmanQuizMain {
 
 	public static void main(String[] args) {
 		
-		Huffman h = new Huffman();
-		try {
-			String temp  = "Hello how aer you doing, i hope you are oin% 23234 asdasdsad nice to meet you ABRRKB AARA A";
-			System.out.println(temp);
-			h.compress("Hello how aer you doing, i hope you are oin% 23234 asdasdsad nice to meet you ABRRKB AARA A");
-		} catch (IOException e) {
-			System.out.println("Exception");
-			e.printStackTrace();
+		String inputString = "";
+		if (args.length == 2) {
+		    try {
+		    	inputString = args[0];
+		    } catch (NumberFormatException e) {
+		        System.err.println("Argument" + args[0]);
+		    }
 		}
 		
-//		if (sentence == null) {
-//			throw new NullPointerException("Input sentence cannot be null.");
-//		}
-//		if (sentence.length() == 0) {
-//			throw new IllegalArgumentException("The string should atleast have 1 character.");
-//		}
-		
+		if(inputString.length() > 0)
+		{
+			testHuffman(inputString);
+		}
+		else
+		{
+			System.out.println("   Unit testing of implemented program   ");
+			System.out.println("*****************************************");
+			testHuffman(inputString);
+			System.out.println("   program ends here   ");
+			System.out.println("************************");
+			
+		}
+	}
+	
+	private static boolean testHuffman(String input)
+	{
+		Huffman huffman = new Huffman();
+		try {
+			System.out.println("Input Data : "+input + " "+input.length() + " bytes\n");
+			if(huffman.compress(input))
+			{
+				System.out.println("Compressed data fits in "+huffman.getEncodedBytes().length + " bytes");
+				System.out.println();
+				String outputString = huffman.decompress(huffman.getEncodedBytes());
+				System.out.println("Original String after decompression : ");
+				System.out.println(outputString);
+				System.out.println();
+				if(input.equals(outputString))
+					return true;
+			}
+			return false;
+		} catch (Exception e) {
+			System.out.println("Exception");
+			e.printStackTrace();
+			return false;
+		}
 	}
 }
 
