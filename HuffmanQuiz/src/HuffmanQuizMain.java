@@ -19,7 +19,12 @@ public class HuffmanQuizMain {
 		{
 			System.out.println("   Unit testing of implemented program   ");
 			System.out.println("*****************************************");
+			System.out.println();
 			testHuffman(inputString);
+			testHuffman(inputString);
+			testHuffman(inputString);
+			testHuffman(inputString);
+			System.out.println();
 			System.out.println("   program ends here   ");
 			System.out.println("************************");
 			
@@ -30,12 +35,11 @@ public class HuffmanQuizMain {
 	{
 		Huffman huffman = new Huffman();
 		try {
-			System.out.println("Input Data : "+input + " "+input.length() + " bytes\n");
+			
 			if(huffman.compress(input))
 			{
-				System.out.println("Compressed data fits in "+huffman.getEncodedBytes().length + " bytes");
-				System.out.println();
 				String outputString = huffman.decompress(huffman.getEncodedBytes());
+				System.out.println();
 				System.out.println("Original String after decompression : ");
 				System.out.println(outputString);
 				System.out.println();

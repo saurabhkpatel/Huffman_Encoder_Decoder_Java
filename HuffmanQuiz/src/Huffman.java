@@ -277,6 +277,12 @@ public class Huffman {
 	 */
 	public boolean compress(String sentence) {
 		boolean result = false;
+		if(sentence==null|| sentence.length() <= 0)
+		{
+			System.out.println("Input Data is NULL or empty text.");
+			return false;
+		}
+		System.out.println("Input Data : "+sentence + " "+sentence.length() + " bytes\n");
 		// convert EOT character in string.
 		String tempExtra = String.valueOf(Character.toChars(3));
 		// add new extra character at the end of message.
@@ -300,6 +306,8 @@ public class Huffman {
 			System.out.println();
 			System.out.println(encodedMessage);
 			setEncodedBytes(convertInBits(encodedMessage));
+			System.out.println();
+			System.out.println("Compressed data fits in "+getEncodedBytes().length + " bytes");
 			result = true;
 		}
 		return result;
