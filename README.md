@@ -29,50 +29,53 @@ When user provides command line argument at that time output displays based on i
 
 **Example :**
 ```
-java HuffmanQuizMain "Hello how are you?"
+java HuffmanQuizMain "How are you doing"
 ```
 Sample Output :
 
 ```
  === User Input Test Case === 
-** Input Data : Hello how are you? 18 bytes
+** Input Data : How are you doing 17 bytes
 
 => Frequency Table : 
      : 3
    a : 1
     : 1
-   e : 2
+   d : 1
+   e : 1
+   g : 1
    H : 1
-   h : 1
-   l : 2
+   i : 1
+   n : 1
    o : 3
    r : 1
    u : 1
    w : 1
    y : 1
-   ? : 1
 
 => The encoding for each character : 
      : 000
    a : 1101
-    : 00100
-   e : 111
-   H : 1000
-   h : 0011
-   l : 101
-   o : 010
-   r : 0110
-   u : 00101
-   w : 0111
-   y : 1001
-   ? : 1100
+    : 1000
+   d : 1110
+   e : 1001
+   g : 0111
+   H : 0110
+   i : 0100
+   n : 1010
+   o : 001
+   r : 1011
+   u : 0101
+   w : 1111
+   y : 1100
 
 => Here is the original data encoded : 
-   10001111011010100000011010011100011010110111000100101000101110000100
+   011000111110001101101110010001100001010100011100010100101001111000
    Compressed data fits in 9 bytes
 
 => Original Input string after decompression : 
-   Hello how are you?
+   How are you doing
 
-*** Compressed :      50%`
+*** Compressed :      47%
+
 ```
