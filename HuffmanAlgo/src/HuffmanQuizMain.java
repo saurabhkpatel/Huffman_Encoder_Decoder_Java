@@ -10,32 +10,32 @@
  */
 public class HuffmanQuizMain {
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		String inputString = "";
-		if (args.length == 2) {
+		if (args.length == 1) {
 		    try {
 		    	inputString = args[0];
-		    } catch (NumberFormatException e) {
+		    } catch (final NumberFormatException e) {
 		        System.err.println("Argument" + args[0]);
 		    }
 		}
 		
 		if(inputString.length() > 0)
 		{
-	
+			testHuffman(inputString,false);
 		}
 		else
 		{
 			System.out.println("   Unit testing of implemented program   ");
 			System.out.println("*****************************************");
 			
-			testHuffman("Hello how are you doing?");
-			testHuffman("Good morning.");
-			testHuffman("");
-			testHuffman(null);
-			testHuffman("A");
-			testHuffman("AB");
-			testHuffman("ABC");
+			testHuffman("ABRRKBAARAA",true);
+			/*testHuffman("Good morning.",true);
+			testHuffman("",true);
+			testHuffman(null,true);
+			testHuffman("A",true);
+			testHuffman("AB",true);
+			testHuffman("ABRRKBAARAA",true);*/
 			
 
 			System.out.println("   program ends here   ");
@@ -44,25 +44,43 @@ public class HuffmanQuizMain {
 		}
 	}
 	
-	private static boolean testHuffman(String input)
+	private static boolean testHuffman(final String input,final boolean flag)
 	{
-		Huffman huffman = new Huffman();
+		final Huffman huffman = new Huffman();
 		try {
 			
-			System.out.println(" === Test Case === ");
+			if(flag)
+			{
+				System.out.println(" === Unit Test Case === ");	
+			}
+			else
+			{
+				System.out.println(" === User Input Test Case === ");
+			}
+			
 			
 			if(huffman.compress(input))
 			{
-				String outputString = huffman.decompress(huffman.getEncodedBytes());
+				int originalBytes = 0;
+				if( input!= null)
+					originalBytes = input.length(); 
+				final int compressedBytes =  huffman.getEncodedBytes().length;
+				final String outputString = huffman.decompress(huffman.getEncodedBytes());
 				System.out.println();
 				System.out.println("=> Original Input string after decompression : ");
 				System.out.println("   "+outputString);
 				System.out.println();
+				
 				if(input.equals(outputString))
+				{
+					final int percentage =(int) ((Math.abs(originalBytes-compressedBytes)/(double)originalBytes)*100);
+					System.out.println("*** Compressed :      "+percentage+"%");
 					return true;
+				}
+					
 			}
 			return false;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println("Exception");
 			e.printStackTrace();
 			return false;

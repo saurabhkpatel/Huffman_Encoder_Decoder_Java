@@ -2,27 +2,30 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
-
 /**
- * Huffman.java
- * This class contains compression and decompression methods. 
- * Compression method will take input as string (original text) and convert that 
- * input string in compressed format using huffman algo. Final outcome after compression
- * is encoded bytes of input string.
+ * Huffman.java This class contains compression and decompression methods.
+ * Compression method will take input as string (original text) and convert that
+ * input string in compressed format using huffman algo. Final outcome after
+ * compression is encoded bytes of input string.
  * 
- * In Decompression, those encoded bytes will be converted to original string using huffman tree 
- * which we already computed in compression part.
- *
+ * In Decompression, those encoded bytes will be converted to original string
+ * using huffman tree which we already computed in compression part.
+ * 
  * @author Saurabh Patel, skpatel@syr.edu
  * @version 1.0
  * @date 10/05/2015
  */
 public class Huffman {
 
-	private PriorityQueue<HuffmanTreeNode> mPriorityQueue = new PriorityQueue<HuffmanTreeNode>();
-	private byte[] mEncodedBytes;
+	private byte[] mEncodedBytes; // Store encoded bytes after compression.
+	// This is local variable which is not shared with decompression.
+	// We use this remaining bits idea to overcome from the problem which has
+	// been mentioned in quiz.
+	// this variable value will be serialize with huffman tree, so at the time
+	// of decompression we can share
+	// on other computer as like huffman tree.
 	private int mRemainingBits = 0;
-	
+
 	/**
 	 * @return the mEncodedBytes
 	 */
@@ -31,9 +34,10 @@ public class Huffman {
 	}
 
 	/**
-	 * @param mEncodedBytes the mEncodedBytes to set
+	 * @param mEncodedBytes
+	 *            the mEncodedBytes to set
 	 */
-	public void setEncodedBytes(byte[] mEncodedBytes) {
+	public void setEncodedBytes(final byte[] mEncodedBytes) {
 		this.mEncodedBytes = mEncodedBytes;
 	}
 
@@ -45,9 +49,10 @@ public class Huffman {
 	 * @return freuencyTable Frequency table.
 	 */
 	private HashMap<Character, Integer> prepareFreqTable(final String text) {
-		HashMap<Character, Integer> freuencyTable = new HashMap<Character, Integer>();
+		final HashMap<Character, Integer> freuencyTable = new HashMap<Character, Integer>();
 		// Read all the contents of the input text and count them.
-		// Add in hashmap with number of count, thus, we can prepare frequency table.
+		// Add in hashmap with number of count, thus, we can prepare frequency
+		// table.
 		for (int i = 0; i < text.length(); i++) {
 			final char a = text.charAt(i);
 			if (freuencyTable.containsKey(a))
@@ -67,7 +72,8 @@ public class Huffman {
 	private void printFreqTable(final HashMap<Character, Integer> freqHashmap) {
 		System.out.println("=> Frequency Table : ");
 		for (final Entry<Character, Integer> entry : freqHashmap.entrySet())
-			System.out.println("   " +entry.getKey() + " : " + entry.getValue());
+			System.out.println("   " + entry.getKey() + " : "
+					+ entry.getValue());
 		System.out.println();
 	}
 
@@ -76,32 +82,39 @@ public class Huffman {
 	 * 
 	 * @param freqHashmap
 	 *            Frequency hash table.
+	 * @return rootNode of HuffmanTree
 	 */
-	private void buildHuffmanTree(final HashMap<Character, Integer> freqHashmap) {
-
+	private HuffmanTreeNode buildHuffmanTree(
+			final HashMap<Character, Integer> freqHashmap) {
+		final PriorityQueue<HuffmanTreeNode> mPriorityQueue = new PriorityQueue<HuffmanTreeNode>();
 		for (final Entry<Character, Integer> entry : freqHashmap.entrySet()) {
-			mPriorityQueue.add(new HuffmanTreeNode(entry.getKey(), entry.getValue(), null, null));
+			mPriorityQueue.add(new HuffmanTreeNode(entry.getKey(),
+					entry.getValue(), null, null));
 		}
 
 		while (mPriorityQueue.size() > 1) {
 			final HuffmanTreeNode left = mPriorityQueue.poll();
 			final HuffmanTreeNode right = mPriorityQueue.poll();
 			final int totalFreq = left.mFrequency + right.mFrequency;
-			final HuffmanTreeNode node = new HuffmanTreeNode('#', totalFreq, left, right);
+			final HuffmanTreeNode node = new HuffmanTreeNode('#', totalFreq,
+					left, right);
 			mPriorityQueue.add(node);
 		}
+		return mPriorityQueue.peek();
 	}
 
 	/**
 	 * Generate code table for characters using huffman tree.
 	 * 
+	 * @param rootNode
+	 *            root node of Huffman tree, we can get code of each character
+	 *            by traverse this.
 	 * @return codeTable return table which contains huffman code for every
 	 *         character.
 	 */
-	private HashMap<Character, String> getCodeTable() {
-		HuffmanTreeNode root = getRoot();
-		HashMap<Character, String> codeTable = new HashMap<Character, String>();
-		generateCode("", root, codeTable);
+	private HashMap<Character, String> getCodeTable(HuffmanTreeNode rootNode) {
+		final HashMap<Character, String> codeTable = new HashMap<Character, String>();
+		generateCode("", rootNode, codeTable);
 		return codeTable;
 	}
 
@@ -117,7 +130,8 @@ public class Huffman {
 	 * @param codeTable
 	 *            out variable code table will be filled up using this function.
 	 */
-	private void generateCode(String code, HuffmanTreeNode root, HashMap<Character, String> codeTable) {
+	private void generateCode(final String code, final HuffmanTreeNode root,
+			final HashMap<Character, String> codeTable) {
 		if (root.mLeft == null && root.mRight == null)
 			codeTable.put(root.mLetter, code);
 		else {
@@ -126,13 +140,6 @@ public class Huffman {
 			if (root.mRight != null)
 				generateCode(code + "0", root.mRight, codeTable);
 		}
-	}
-
-	/**
-	 * Get huffman tree root node.
-	 */
-	private HuffmanTreeNode getRoot() {
-		return mPriorityQueue.peek();
 	}
 
 	/**
@@ -145,7 +152,8 @@ public class Huffman {
 	private void printCodingTable(final HashMap<Character, String> codeTable) {
 		System.out.println("=> The encoding for each character : ");
 		for (final Entry<Character, String> entry : codeTable.entrySet())
-			System.out.println("   " + entry.getKey() + " : " + entry.getValue());
+			System.out.println("   " + entry.getKey() + " : "
+					+ entry.getValue());
 		System.out.println();
 	}
 
@@ -159,7 +167,8 @@ public class Huffman {
 	 *            huffman code table.
 	 * @return result binary format string.
 	 */
-	private String generateEncodedMessage(String inputStr, final HashMap<Character, String> codeTable) {
+	private String generateEncodedMessage(final String inputStr,
+			final HashMap<Character, String> codeTable) {
 		String result = "";
 		for (int i = 0; i < inputStr.length(); i++) {
 			result = result + codeTable.get(inputStr.charAt(i));
@@ -176,13 +185,14 @@ public class Huffman {
 	 *            tree.
 	 * @return bytes resultant array of bytes.
 	 */
-	private byte[] convertInBits(String binaryString) {
+	private byte[] convertInBits(final String binaryString) {
 		boolean completeBytes = true; // flag of complete bytes.
 		int numOfBytes = binaryString.length() / 8; // calculate number of bytes
 													// using binary string
 													// length.
-		int remainingBytes = binaryString.length() % 8;// check is there any
-														// remaining bytes.
+		final int remainingBytes = binaryString.length() % 8;// check is there
+																// any
+		// remaining bytes.
 		// actually we are here checking that we have binary string length is
 		// multiple of 8 or not.
 		// if not then we are storing remaining bytes after divide of 8 in one
@@ -191,15 +201,16 @@ public class Huffman {
 			numOfBytes++;
 			completeBytes = false;
 		}
-		byte[] bytes = new byte[numOfBytes];
+		final byte[] bytes = new byte[numOfBytes];
 		// convert every 8 characters from binary format string to integer.
 		for (int i = 0; i < numOfBytes; ++i) {
 			if (!completeBytes && (i == (numOfBytes - 1))) {
-				String temp = binaryString.substring(8 * i, (8 * i) + remainingBytes);
+				final String temp = binaryString.substring(8 * i, (8 * i)
+						+ remainingBytes);
 				mRemainingBits = remainingBytes;
 				bytes[i] = (byte) (Integer.parseInt(temp, 2) & 0xFF);
 			} else {
-				String temp = binaryString.substring(8 * i, (8 * i) + 8);
+				final String temp = binaryString.substring(8 * i, (8 * i) + 8);
 				bytes[i] = (byte) (Integer.parseInt(temp, 2) & 0xFF);
 			}
 		}
@@ -213,8 +224,9 @@ public class Huffman {
 	 *            encoded bytes in string format.
 	 * @return decodedMessage string after decoded input string.
 	 */
-	private String decodeMessage(String message, HuffmanTreeNode node) {
-		StringBuilder decodedMessage = new StringBuilder();
+	private String decodeMessage(final String message,
+			final HuffmanTreeNode node) {
+		final StringBuilder decodedMessage = new StringBuilder();
 		HuffmanTreeNode root = node;
 		if (root == null)
 			return new String(decodedMessage);
@@ -243,23 +255,33 @@ public class Huffman {
 	 * 
 	 * @param bytes
 	 *            input bytes
+	 * @param remainingBytes
+	 *            bytes which we need to take in last byte.
 	 * @return result string representation of input bytes.
 	 */
-	private String getBitsString(byte[] bytes) {
+	private String getBitsString(final byte[] bytes, int remainingBytes) {
 		String result = "";
 		for (int i = 0; i < bytes.length; i++) {
-			byte b1 = (byte) bytes[i];
+			final byte b1 = (byte) bytes[i];
 			String byteString = "";
-			if (mRemainingBits > 0 && i == (bytes.length - 1)) {
-				String format = "%" + mRemainingBits + "s";
-				byteString = String.format(format, Integer.toBinaryString(b1 & 0xFF)).replace(' ', '0');
+			if (remainingBytes > 0 && i == (bytes.length - 1)) {
+				final String format = "%" + remainingBytes + "s";
+				byteString = String.format(format,
+						Integer.toBinaryString(b1 & 0xFF)).replace(' ', '0');
 			} else {
-				byteString = String.format("%8s", Integer.toBinaryString(b1 & 0xFF)).replace(' ', '0');
+				byteString = String.format("%8s",
+						Integer.toBinaryString(b1 & 0xFF)).replace(' ', '0');
 			}
 			result += byteString;
 		}
 		return result;
 	}
+
+	/*
+	 * private void seri() { Utils.writeSerializeTree(getRoot(),4);
+	 * HuffmanTreeNode h = Utils.readSerializeTree();
+	 * System.out.println("hello"); }
+	 */
 
 	/**
 	 * Decompress the string using huffman algorithm. Here we are assuming that
@@ -272,13 +294,15 @@ public class Huffman {
 	 *            bytes of input string after compression.
 	 * @return result original string message after decompression.
 	 */
-	public String decompress(byte[] compressBytes) {
+	public String decompress(final byte[] compressBytes) {
 		// get string representation of bytes.
 		// for example "010000101010".
-		String str = getBitsString(compressBytes);
-		// get root of huffman tree.
-		HuffmanTreeNode root = getRoot();
-		return decodeMessage(str, root);
+		// Here we need to read huffman serialize tree with remaining bits from
+		// huffman.tree file.
+		int remainingBytes = Utils.readRemainingBits();
+		HuffmanTreeNode rootNode = Utils.readSerializeTree();
+		final String str = getBitsString(compressBytes, remainingBytes);
+		return decodeMessage(str, rootNode);
 	}
 
 	/**
@@ -286,39 +310,39 @@ public class Huffman {
 	 * 
 	 * @param sentence
 	 *            The sentence to be serialized
-	 * @return boolean
-	 * 			true if compression done successfully, otherwise false.
+	 * @return boolean true if compression done successfully, otherwise false.
 	 * 
 	 */
-	public boolean compress(String sentence) {
+	public boolean compress(final String sentence) {
 		boolean result = false;
-		if(sentence==null|| sentence.length() <= 0)
-		{
+		if (sentence == null || sentence.length() <= 0) {
 			System.out.println("** Input Data is NULL or empty text.");
 			return false;
 		}
-		System.out.println("** Input Data : "+sentence + " "+sentence.length() + " bytes\n");
+		System.out.println("** Input Data : " + sentence + " "
+				+ sentence.length() + " bytes\n");
 		// convert EOT character in string.
-		String tempExtra = String.valueOf(Character.toChars(3));
+		final String tempExtra = String.valueOf(Character.toChars(3));
 		// add new extra character at the end of message.
-		String input = sentence + tempExtra;
-		HashMap<Character, Integer> freuencyTable = prepareFreqTable(input);
+		final String input = sentence + tempExtra;
+		final HashMap<Character, Integer> freuencyTable = prepareFreqTable(input);
 		// print frequency table.
 		printFreqTable(freuencyTable);
 		// build huffman tree.
-		buildHuffmanTree(freuencyTable);
+		HuffmanTreeNode root = buildHuffmanTree(freuencyTable);
 		// get prefix or huffman code for every character.
-		HashMap<Character, String> codeTable = getCodeTable();
+		final HashMap<Character, String> codeTable = getCodeTable(root);
 		// print codeTable.
 		printCodingTable(codeTable);
 		// build string of original message text in binary format.
-		String encodedMessage = generateEncodedMessage(input,codeTable);
-		if(encodedMessage!= null && encodedMessage.length() > 0)
-		{
+		final String encodedMessage = generateEncodedMessage(input, codeTable);
+		if (encodedMessage != null && encodedMessage.length() > 0) {
 			System.out.println("=> Here is the original data encoded : ");
-			System.out.println("   "+encodedMessage);
+			System.out.println("   " + encodedMessage);
 			setEncodedBytes(convertInBits(encodedMessage));
-			System.out.println("   Compressed data fits in "+getEncodedBytes().length + " bytes");
+			System.out.println("   Compressed data fits in "
+					+ getEncodedBytes().length + " bytes");
+			Utils.writeSerializeTree(root, mRemainingBits);
 			result = true;
 		}
 		return result;
