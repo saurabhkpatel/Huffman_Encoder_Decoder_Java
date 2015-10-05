@@ -1,7 +1,16 @@
+/**
+ * HuffmanQuizMain.java
+ * This class is the starting point of this application. 
+ * It will demonstrates the compression and decompression of input string message by command line argument or
+ * show results of unit testing if command line argument has not provided.
+
+ * @author Saurabh Patel, skpatel@syr.edu
+ * @version 1.0
+ * @date 10/05/2015
+ */
 public class HuffmanQuizMain {
 
 	public static void main(String[] args) {
-		
 		String inputString = "";
 		if (args.length == 2) {
 		    try {
@@ -13,18 +22,22 @@ public class HuffmanQuizMain {
 		
 		if(inputString.length() > 0)
 		{
-			testHuffman(inputString);
+	
 		}
 		else
 		{
 			System.out.println("   Unit testing of implemented program   ");
 			System.out.println("*****************************************");
-			System.out.println();
-			testHuffman(inputString);
-			testHuffman(inputString);
-			testHuffman(inputString);
-			testHuffman(inputString);
-			System.out.println();
+			
+			testHuffman("Hello how are you doing?");
+			testHuffman("Good morning.");
+			testHuffman("");
+			testHuffman(null);
+			testHuffman("A");
+			testHuffman("AB");
+			testHuffman("ABC");
+			
+
 			System.out.println("   program ends here   ");
 			System.out.println("************************");
 			
@@ -36,12 +49,14 @@ public class HuffmanQuizMain {
 		Huffman huffman = new Huffman();
 		try {
 			
+			System.out.println(" === Test Case === ");
+			
 			if(huffman.compress(input))
 			{
 				String outputString = huffman.decompress(huffman.getEncodedBytes());
 				System.out.println();
-				System.out.println("Original String after decompression : ");
-				System.out.println(outputString);
+				System.out.println("=> Original Input string after decompression : ");
+				System.out.println("   "+outputString);
 				System.out.println();
 				if(input.equals(outputString))
 					return true;

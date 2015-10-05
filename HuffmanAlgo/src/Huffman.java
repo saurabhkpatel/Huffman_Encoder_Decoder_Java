@@ -2,6 +2,21 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
+
+/**
+ * Huffman.java
+ * This class contains compression and decompression methods. 
+ * Compression method will take input as string (original text) and convert that 
+ * input string in compressed format using huffman algo. Final outcome after compression
+ * is encoded bytes of input string.
+ * 
+ * In Decompression, those encoded bytes will be converted to original string using huffman tree 
+ * which we already computed in compression part.
+ *
+ * @author Saurabh Patel, skpatel@syr.edu
+ * @version 1.0
+ * @date 10/05/2015
+ */
 public class Huffman {
 
 	private PriorityQueue<HuffmanTreeNode> mPriorityQueue = new PriorityQueue<HuffmanTreeNode>();
@@ -50,10 +65,10 @@ public class Huffman {
 	 *            Frequency hash table.
 	 */
 	private void printFreqTable(final HashMap<Character, Integer> freqHashmap) {
-		System.out.println("Frequency Table : ");
+		System.out.println("=> Frequency Table : ");
 		for (final Entry<Character, Integer> entry : freqHashmap.entrySet())
-			System.out.println(entry.getKey() + " : " + entry.getValue());
-		System.out.println("\n\n");
+			System.out.println("   " +entry.getKey() + " : " + entry.getValue());
+		System.out.println();
 	}
 
 	/**
@@ -128,10 +143,10 @@ public class Huffman {
 	 *            code table is hashmap which stores key/value = character/code.
 	 */
 	private void printCodingTable(final HashMap<Character, String> codeTable) {
-		System.out.println("The encoding for each character : ");
+		System.out.println("=> The encoding for each character : ");
 		for (final Entry<Character, String> entry : codeTable.entrySet())
-			System.out.println(entry.getKey() + " : " + entry.getValue());
-		System.out.println("\n\n");
+			System.out.println("   " + entry.getKey() + " : " + entry.getValue());
+		System.out.println();
 	}
 
 	/**
@@ -279,10 +294,10 @@ public class Huffman {
 		boolean result = false;
 		if(sentence==null|| sentence.length() <= 0)
 		{
-			System.out.println("Input Data is NULL or empty text.");
+			System.out.println("** Input Data is NULL or empty text.");
 			return false;
 		}
-		System.out.println("Input Data : "+sentence + " "+sentence.length() + " bytes\n");
+		System.out.println("** Input Data : "+sentence + " "+sentence.length() + " bytes\n");
 		// convert EOT character in string.
 		String tempExtra = String.valueOf(Character.toChars(3));
 		// add new extra character at the end of message.
@@ -300,14 +315,10 @@ public class Huffman {
 		String encodedMessage = generateEncodedMessage(input,codeTable);
 		if(encodedMessage!= null && encodedMessage.length() > 0)
 		{
-			System.out.println();
-			System.out.println();
-			System.out.println("Here is the original data encoded : ");
-			System.out.println();
-			System.out.println(encodedMessage);
+			System.out.println("=> Here is the original data encoded : ");
+			System.out.println("   "+encodedMessage);
 			setEncodedBytes(convertInBits(encodedMessage));
-			System.out.println();
-			System.out.println("Compressed data fits in "+getEncodedBytes().length + " bytes");
+			System.out.println("   Compressed data fits in "+getEncodedBytes().length + " bytes");
 			result = true;
 		}
 		return result;
