@@ -29,13 +29,13 @@ public class HuffmanQuizMain {
 			System.out.println("   Unit testing of implemented program   ");
 			System.out.println("*****************************************");
 			
-			testHuffman("ABRRKBAARAA",true);
-			/*testHuffman("Good morning.",true);
+			testHuffman("Hello how are you?",true);
+			testHuffman("AS ss   AS.",true);
 			testHuffman("",true);
 			testHuffman(null,true);
 			testHuffman("A",true);
 			testHuffman("AB",true);
-			testHuffman("ABRRKBAARAA",true);*/
+			testHuffman("ABRRKBAARAA",true);
 			
 
 			System.out.println("   program ends here   ");
@@ -50,13 +50,9 @@ public class HuffmanQuizMain {
 		try {
 			
 			if(flag)
-			{
-				System.out.println(" === Unit Test Case === ");	
-			}
+				System.out.println("\n === Unit Test Case === ");	
 			else
-			{
-				System.out.println(" === User Input Test Case === ");
-			}
+				System.out.println("\n === User Input Test Case === ");
 			
 			
 			if(huffman.compress(input))

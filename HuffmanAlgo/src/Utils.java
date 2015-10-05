@@ -18,7 +18,10 @@ import java.util.StringTokenizer;
  * @date 10/05/2015
  */
 public class Utils {
-
+	
+	// Separator for tree nodes when we are doing serialize and deserialize..
+	public final static String BELL_CHAR = String.valueOf(Character.toChars(7));
+	
 	/**
 	 * serialize huffman tree in file.
 	 * 
@@ -44,11 +47,12 @@ public class Utils {
 	 * 			           
 	 */
 	private static void serialize(HuffmanTreeNode node, StringBuilder sb) {
+	
 		if (node == null) {
-			sb.append("? ");
+			sb.append("?"+BELL_CHAR);
 		} else {
 			// pre-order.
-			sb.append(node.mLetter + "~" + node.mFrequency + " ");
+			sb.append(node.mLetter + "~" + node.mFrequency + BELL_CHAR);
 			serialize(node.mLeft, sb);
 			serialize(node.mRight, sb);
 		}
@@ -65,7 +69,7 @@ public class Utils {
 	private static HuffmanTreeNode deserialize(String s) {
 		if (s == null || s.length() == 0)
 			return null;
-		StringTokenizer st = new StringTokenizer(s, " ");
+		StringTokenizer st = new StringTokenizer(s, BELL_CHAR);
 		return deserialize(st);
 	}
 
