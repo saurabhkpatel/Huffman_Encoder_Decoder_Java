@@ -11,19 +11,89 @@ import java.util.PriorityQueue;
  * In Decompression, those encoded bytes will be converted to original string
  * using huffman tree which we already computed in compression part.
  * 
+ * 
+ * In quiz description there is one problem stated :
+ * 
+ * " You may encounter one issue during the decompression/decoding phase. Your
+ * encoded string may not be a multiple of 8. This means that when you compress
+ * your encoding into a binary number, padding 0’s get added. Then, upon
+ * decompression, you may see extra characters. To counter this, one solution is
+ * to add your own padding of 1 extra character every time. And then simply
+ * strip it off once you have decoded."
+ * 
+ * To over come this problem, I have added new Extra character that character is
+ * End ot Text (0x03) In addition to that, After encoded string while we are
+ * converting string to bytes, at that time in last byte we need to keep track
+ * of number of bits are in multiple of 8 or not. If not then we need to keep
+ * information somewhere that we are going to take only last number of bits
+ * which we kept.
+ * 
+ * Lets take a example to explain this :
+ * 
+ *  * // @formatter:off
+ * 
+** Input Data : ABRRKBAARAA 11 bytes
+
+=> Frequency Table : 
+   A : 5
+   B : 2
+   R : 3
+    : 1
+   K : 1
+
+=> The encoding for each character : 
+   A : 1
+   R : 01
+   B : 001
+    : 0001
+   K : 0000
+
+=> Here is the original data encoded : 
+   1001010100000011101110001
+   Compressed data fits in 4 bytes
+
+=> Original Input string after decompression : 
+   ABRRKBAARAA
+   
+ * 
+ * 
+ * In above example, input text is going to be convert in this after huffman code
+ * 1001010100000011101110001. This string we can represent in 4 bytes.
+ * 
+ * 10010101 => 149
+ * 00000011 => 3
+ * 10111000 => 184  
+ * 1        => 1 
+ * 
+ * // @formatter:on
+ * 
+ * Here in last 4th byte we have only 1 bit information which is important for
+ * us, so we need to share this information to decompression side. So when
+ * decompression algo will convert all bytes as 8 bits but only last byte as 1
+ * bit only.
+ * 
+ * So, this information I am sharing with tree, when tree is serialize in file.
+ * At that time I am also storing this number of remaining bits information for
+ * last byte.
+ * 
+ * I have another idea to overcome from this problem. In that idea we can add
+ * one character with only 1 frequency and add in huffman tree at last. ut in
+ * that case in every character's code one bit information will be increase.
+ * Thus, I felt this approach better than that one.
+ * 
  * @author Saurabh Patel, skpatel@syr.edu
  * @version 1.0
  * @date 10/05/2015
  */
 public class Huffman {
-
-	private byte[] mEncodedBytes; // Store encoded bytes after compression.
+	// Store encoded bytes after compression.
 	// This is local variable which is not shared with decompression.
 	// We use this remaining bits idea to overcome from the problem which has
 	// been mentioned in quiz.
 	// this variable value will be serialize with huffman tree, so at the time
 	// of decompression we can share
 	// on other computer as like huffman tree.
+	private byte[] mEncodedBytes;
 	private int mRemainingBits = 0;
 
 	/**
@@ -112,7 +182,7 @@ public class Huffman {
 	 * @return codeTable return table which contains huffman code for every
 	 *         character.
 	 */
-	private HashMap<Character, String> getCodeTable(HuffmanTreeNode rootNode) {
+	private HashMap<Character, String> getCodeTable(final HuffmanTreeNode rootNode) {
 		final HashMap<Character, String> codeTable = new HashMap<Character, String>();
 		generateCode("", rootNode, codeTable);
 		return codeTable;
@@ -259,7 +329,7 @@ public class Huffman {
 	 *            bytes which we need to take in last byte.
 	 * @return result string representation of input bytes.
 	 */
-	private String getBitsString(final byte[] bytes, int remainingBytes) {
+	private String getBitsString(final byte[] bytes, final int remainingBytes) {
 		String result = "";
 		for (int i = 0; i < bytes.length; i++) {
 			final byte b1 = (byte) bytes[i];
@@ -299,8 +369,8 @@ public class Huffman {
 		// for example "010000101010".
 		// Here we need to read huffman serialize tree with remaining bits from
 		// huffman.tree file.
-		int remainingBytes = Utils.readRemainingBits();
-		HuffmanTreeNode rootNode = Utils.readSerializeTree();
+		final int remainingBytes = Utils.readRemainingBits();
+		final HuffmanTreeNode rootNode = Utils.readSerializeTree();
 		final String str = getBitsString(compressBytes, remainingBytes);
 		return decodeMessage(str, rootNode);
 	}
@@ -329,7 +399,7 @@ public class Huffman {
 		// print frequency table.
 		printFreqTable(freuencyTable);
 		// build huffman tree.
-		HuffmanTreeNode root = buildHuffmanTree(freuencyTable);
+		final HuffmanTreeNode root = buildHuffmanTree(freuencyTable);
 		// get prefix or huffman code for every character.
 		final HashMap<Character, String> codeTable = getCodeTable(root);
 		// print codeTable.
