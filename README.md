@@ -21,6 +21,7 @@ With Command Line argument :
 Without Command Line argument :
 `java HuffmanQuizMain`
 
+**Note** : Please use proper command line arguments as instructed. Only give one command line argument if you want to test userinput otherwise unit test cases will be executed.
 
 When command line argument has not provided at that time program will run it's by default unit test cases.
 When user provides command line argument at that time output displays based on input string.
